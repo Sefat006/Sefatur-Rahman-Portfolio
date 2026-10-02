@@ -1,0 +1,66 @@
+.social-3d-parent {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+}
+
+.social-3d-child {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform-style: preserve-3d;
+  transition: all 0.3s cubic-bezier(0.68, 0.85, 0.265, 1.85);
+  border-radius: 8px;
+  background-color: #ffffff;
+  box-shadow:
+    inset 1px 1px 2px #ffffff,
+    0 0 8px rgba(0, 0, 0, 0.35);
+  position: relative;
+}
+
+/* 3D tilt on hover */
+.social-3d-child:hover {
+  background-color: #ffffff;
+  transform: perspective(180px) rotateX(60deg) translateY(2px);
+}
+
+.social-3d-child.child-github:hover {
+  box-shadow: 0px 10px 14px rgba(24, 23, 23, 0.65);
+}
+
+.social-3d-child.child-linkedin:hover {
+  box-shadow: 0px 10px 14px #0a66c2;
+}
+
+.social-3d-child.child-codeforces:hover {
+  box-shadow: 0px 10px 14px #2196f3;
+}
+
+.social-3d-child.child-leetcode:hover {
+  box-shadow: 0px 10px 14px #ffa116;
+}
+
+.social-3d-btn {
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  text-decoration: none;
+  transition-duration: 0.5s;
+  transition-timing-function: cubic-bezier(0.68, -0.85, 0.265, 1.55);
+}
+
+/* Lift icon UPWARDS in 3D (standing above the base plate, not below) */
+.social-3d-child:hover > .social-3d-btn {
+  transform: translate3d(0px, -20px, 30px) perspective(80px) rotateX(-60deg)
+    translateY(-2px) translateZ(10px);
+}

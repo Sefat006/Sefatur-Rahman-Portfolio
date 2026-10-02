@@ -1,0 +1,4 @@
+/* আপনার ছবি অনুসারে object-position ঠিক করুন যেন মাথার অংশটি সঠিক জায়গায় থাকে */
+.profile-img-overlap {
+    object-position: 50% 15%; /* 50% Horizontal, 15% Vertical (এটি প্রয়োজন হলে পরিবর্তন করুন) */
+}

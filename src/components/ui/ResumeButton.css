@@ -1,0 +1,128 @@
+.resume-uiverse-btn {
+  --width: 104px;
+  --height: 38px;
+  --tooltip-height: 30px;
+  --tooltip-width: 95px;
+  --gap-between-tooltip-to-button: 14px;
+  --button-color: #8b5cf6;
+  --button-hover-color: #7c3aed;
+  --tooltip-color: #ffffff;
+  
+  width: var(--width);
+  height: var(--height);
+  background: var(--button-color);
+  position: relative;
+  text-align: center;
+  border-radius: 0.55em;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.35);
+  user-select: none;
+}
+
+.resume-uiverse-btn::before {
+  position: absolute;
+  content: attr(data-tooltip);
+  width: var(--tooltip-width);
+  height: var(--tooltip-height);
+  background-color: var(--tooltip-color);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #111111;
+  border-radius: 0.35em;
+  line-height: var(--tooltip-height);
+  bottom: calc(var(--height) + var(--gap-between-tooltip-to-button) + 8px);
+  left: calc(50% - var(--tooltip-width) / 2);
+  pointer-events: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  z-index: 60;
+  white-space: nowrap;
+}
+
+.resume-uiverse-btn::after {
+  position: absolute;
+  content: '';
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-top-color: var(--tooltip-color);
+  left: calc(50% - 6px);
+  bottom: calc(100% + var(--gap-between-tooltip-to-button) - 4px);
+  pointer-events: none;
+  z-index: 60;
+}
+
+.resume-uiverse-btn::after,
+.resume-uiverse-btn::before {
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.resume-uiverse-btn .button-wrapper,
+.resume-uiverse-btn .text,
+.resume-uiverse-btn .icon {
+  overflow: hidden;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  color: #ffffff;
+}
+
+.resume-uiverse-btn .text {
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: top 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.resume-uiverse-btn .icon {
+  color: #ffffff;
+  top: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: top 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.resume-uiverse-btn .icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.resume-uiverse-btn:hover {
+  background: var(--button-hover-color);
+  box-shadow: 0 0 25px rgba(139, 92, 246, 0.7);
+  transform: translateY(-1px);
+}
+
+.resume-uiverse-btn:hover .text {
+  top: -100%;
+}
+
+.resume-uiverse-btn:hover .icon {
+  top: 0;
+}
+
+.resume-uiverse-btn:hover::before,
+.resume-uiverse-btn:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+.resume-uiverse-btn:hover::after {
+  bottom: calc(var(--height) + var(--gap-between-tooltip-to-button) - 12px);
+}
+
+.resume-uiverse-btn:hover::before {
+  bottom: calc(var(--height) + var(--gap-between-tooltip-to-button));
+}
