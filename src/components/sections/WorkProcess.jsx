@@ -1,23 +1,13 @@
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import React, { useRef, useEffect } from 'react';
 import { Sparkles, ArrowRight } from 'lucide-react';
 
-// Custom Animated SVGs for each step
+// Custom Pure CSS Animated SVGs for each step
 const DiscoveryCallIcon = ({ color }) => (
   <div className="relative w-7 h-7 flex items-center justify-center">
     {/* Radiating sound/call waves */}
-    <motion.span
-      className="absolute -right-0.5 -top-0.5 w-2 h-2 rounded-full border border-sky-400"
-      animate={{ scale: [1, 2.2], opacity: [0.9, 0] }}
-      transition={{ duration: 1.6, repeat: Infinity, ease: "easeOut" }}
-    />
-    <motion.span
-      className="absolute -right-1.5 -top-1.5 w-3.5 h-3.5 rounded-full border border-sky-400/60"
-      animate={{ scale: [1, 2.4], opacity: [0.7, 0] }}
-      transition={{ duration: 1.6, repeat: Infinity, ease: "easeOut", delay: 0.35 }}
-    />
+    <span className="absolute -right-0.5 -top-0.5 w-2 h-2 rounded-full border border-sky-400 animate-ping opacity-75" />
     {/* Phone / Call SVG with subtle ringing animation */}
-    <motion.svg
+    <svg
       viewBox="0 0 24 24"
       width="22"
       height="22"
@@ -26,11 +16,10 @@ const DiscoveryCallIcon = ({ color }) => (
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      animate={{ rotate: [-4, 4, -4] }}
-      transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+      className="animate-[pulse_2s_ease-in-out_infinite]"
     >
       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-    </motion.svg>
+    </svg>
   </div>
 );
 
@@ -50,16 +39,13 @@ const ProposalContractIcon = ({ color }) => (
       <polyline points="14 2 14 8 20 8" />
       <line x1="8" y1="12" x2="16" y2="12" opacity="0.4" />
       <line x1="8" y1="16" x2="13" y2="16" opacity="0.4" />
-      {/* Animated Checkmark Signing */}
-      <motion.path
+      <path
         d="M9 15l2 2 4-4"
         stroke={color}
         strokeWidth="2.4"
         strokeLinecap="round"
         strokeLinejoin="round"
-        initial={{ pathLength: 0 }}
-        animate={{ pathLength: [0, 1, 1, 0] }}
-        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+        className="animate-pulse"
       />
     </svg>
   </div>
@@ -68,7 +54,7 @@ const ProposalContractIcon = ({ color }) => (
 const BuildIterateIcon = ({ color }) => (
   <div className="relative w-7 h-7 flex items-center justify-center">
     {/* Rotating Iteration Loop */}
-    <motion.svg
+    <svg
       viewBox="0 0 24 24"
       width="24"
       height="24"
@@ -77,14 +63,13 @@ const BuildIterateIcon = ({ color }) => (
       strokeWidth="1.8"
       strokeLinecap="round"
       strokeLinejoin="round"
-      animate={{ rotate: 360 }}
-      transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+      className="animate-[spin_6s_linear_infinite]"
     >
       <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-1.19" strokeDasharray="2 3" opacity="0.5" />
-    </motion.svg>
+    </svg>
     {/* Pulsing Code Brackets */}
     <div className="absolute inset-0 flex items-center justify-center">
-      <motion.svg
+      <svg
         viewBox="0 0 24 24"
         width="14"
         height="14"
@@ -93,12 +78,11 @@ const BuildIterateIcon = ({ color }) => (
         strokeWidth="2.5"
         strokeLinecap="round"
         strokeLinejoin="round"
-        animate={{ scale: [0.9, 1.15, 0.9] }}
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        className="animate-pulse"
       >
         <polyline points="16 18 22 12 16 6" />
         <polyline points="8 6 2 12 8 18" />
-      </motion.svg>
+      </svg>
     </div>
   </div>
 );
@@ -106,10 +90,7 @@ const BuildIterateIcon = ({ color }) => (
 const LaunchSupportIcon = ({ color }) => (
   <div className="relative w-7 h-7 flex items-center justify-center">
     {/* Floating Launch Rocket */}
-    <motion.div
-      animate={{ y: [-2, 2, -2] }}
-      transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-    >
+    <div className="animate-[bounce_2s_ease-in-out_infinite]">
       <svg
         viewBox="0 0 24 24"
         width="22"
@@ -125,13 +106,9 @@ const LaunchSupportIcon = ({ color }) => (
         <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
         <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
       </svg>
-    </motion.div>
+    </div>
     {/* Animated exhaust thrust sparkle */}
-    <motion.span
-      className="absolute -bottom-1 -left-1 w-2.5 h-2.5 rounded-full bg-emerald-400 blur-[2px]"
-      animate={{ scale: [0.8, 1.8, 0.8], opacity: [0.8, 0.2, 0.8] }}
-      transition={{ duration: 0.9, repeat: Infinity, ease: "easeInOut" }}
-    />
+    <span className="absolute -bottom-1 -left-1 w-2.5 h-2.5 rounded-full bg-emerald-400 blur-[2px] animate-ping" />
   </div>
 );
 
@@ -178,43 +155,94 @@ const workflowSteps = [
     color: "#10b981", // Emerald
     pingColor: "bg-emerald-400",
     gradient: "from-emerald-400 to-teal-600",
-    glowColor: "rgba(16, 185, 129, 0.15)"
+    glowColor: "rgba(168, 185, 129, 0.15)"
   }
 ];
 
 const WorkProcess = () => {
+  const container = useRef(null);
   const mobileTimelineRef = useRef(null);
+  const mobileDotRef = useRef(null);
+  const mobileLineRef = useRef(null);
 
-  // Scroll tracking for mobile vertical timeline
-  const { scrollYProgress } = useScroll({
-    target: mobileTimelineRef,
-    offset: ["start 75%", "end 60%"]
-  });
+  // Smooth scroll tracking for the mobile vertical timeline glowing dot and active rail
+  useEffect(() => {
+    let ticking = false;
 
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 24,
-    restDelta: 0.001
-  });
+    const updateMobileScroll = () => {
+      if (!mobileTimelineRef.current) return;
+      const rect = mobileTimelineRef.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
 
-  // Glowing dot movement along vertical line on mobile
-  const dotY = useTransform(smoothProgress, [0, 1], ["0%", "100%"]);
-  const fillLineHeight = useTransform(smoothProgress, [0, 1], ["0%", "100%"]);
+      const startPoint = windowHeight * 0.75;
+      const endPoint = windowHeight * 0.45;
+      const totalDistance = rect.height + (startPoint - endPoint);
+      const currentDistance = startPoint - rect.top;
+
+      const progress = Math.min(Math.max(currentDistance / totalDistance, 0), 1);
+      const percentage = `${progress * 100}%`;
+
+      if (mobileDotRef.current) {
+        mobileDotRef.current.style.top = percentage;
+      }
+      if (mobileLineRef.current) {
+        mobileLineRef.current.style.height = percentage;
+      }
+
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(updateMobileScroll);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    updateMobileScroll();
+
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Pure IntersectionObserver for instant entrance
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.remove('opacity-0', 'translate-y-4');
+            entry.target.classList.add('opacity-100', 'translate-y-0');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        rootMargin: '100px 0px 0px 0px',
+        threshold: 0.01
+      }
+    );
+
+    if (container.current) {
+      const items = container.current.querySelectorAll('.process-fade-item');
+      items.forEach((item, index) => {
+        item.classList.add('opacity-0', 'translate-y-3', 'transition-all', 'duration-300', 'ease-out');
+        item.style.transitionDelay = `${index * 40}ms`;
+        observer.observe(item);
+      });
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <section id="process" className="py-20 lg:py-24 relative z-10 overflow-hidden">
+    <section id="process" ref={container} className="py-20 lg:py-24 relative z-10 overflow-hidden">
       {/* Background Ambient Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[320px] bg-purple-500/10 rounded-full blur-[140px] pointer-events-none -z-0" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[320px] bg-purple-500/10 rounded-full blur-[140px] pointer-events-none -z-0 transform-gpu" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
         {/* Section Heading */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12 sm:mb-16"
-        >
+        <div className="process-fade-item text-center mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-secondary/10 border border-secondary/20 text-secondary text-xs font-semibold uppercase tracking-wider mb-3">
             <Sparkles size={14} />
             <span>Workflow & Methodology</span>
@@ -225,30 +253,32 @@ const WorkProcess = () => {
           <p className="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
             A battle-tested 4-step framework guaranteeing transparency, precision, and predictable delivery from the very first meeting to project launch.
           </p>
-        </motion.div>
+        </div>
 
-        {/* MOBILE VIEW (< lg): Vertical timeline with moving scroll-driven glow dot on left rail */}
+        {/* MOBILE VIEW (< lg): Vertical timeline with moving glowing dot and active rail */}
         <div ref={mobileTimelineRef} className="lg:hidden relative flex flex-col gap-6 sm:gap-7">
           {/* Vertical Track Rail on the Left */}
-          <div className="absolute left-3.5 sm:left-5 top-5 bottom-8 w-[2px] -translate-x-1/2 bg-white/10 z-0 pointer-events-none">
+          <div className="absolute left-3.5 sm:left-5 top-5 bottom-8 w-[2px] -translate-x-1/2 bg-white/10 z-0 pointer-events-none overflow-hidden">
             {/* Active Gradient Fill Progress Line */}
-            <motion.div
-              style={{ height: fillLineHeight }}
+            <div
+              ref={mobileLineRef}
+              style={{ height: '0%' }}
               className="absolute top-0 left-0 w-full bg-gradient-to-b from-sky-400 via-purple-500 to-emerald-400 shadow-[0_0_12px_#a855f7]"
             />
+          </div>
 
-            {/* Moving Glowing Dot as Scroll Goes Down */}
-            <motion.div
-              style={{ top: dotY }}
-              className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-cyan-300 shadow-[0_0_18px_6px_#22d3ee,0_0_30px_10px_#a855f7] z-20 pointer-events-none"
-            >
-              <span className="absolute inset-0 rounded-full bg-cyan-400 animate-ping opacity-75" />
-              <span className="relative block w-full h-full rounded-full bg-white shadow-[0_0_8px_#ffffff]" />
-            </motion.div>
+          {/* Moving Glowing Dot as Scroll Goes Down */}
+          <div
+            ref={mobileDotRef}
+            style={{ top: '0%' }}
+            className="absolute left-3.5 sm:left-5 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-cyan-300 shadow-[0_0_18px_6px_#22d3ee,0_0_30px_10px_#a855f7] z-20 pointer-events-none transform-gpu"
+          >
+            <span className="absolute inset-0 rounded-full bg-cyan-400 animate-ping opacity-75" />
+            <span className="relative block w-full h-full rounded-full bg-white shadow-[0_0_8px_#ffffff]" />
           </div>
 
           {/* Vertical Step Cards List */}
-          {workflowSteps.map((step, index) => {
+          {workflowSteps.map((step) => {
             const StepIconComponent = step.icon;
             return (
               <div key={step.step} className="relative w-full pl-8 sm:pl-12">
@@ -258,19 +288,13 @@ const WorkProcess = () => {
                   style={{ borderColor: step.color, color: step.color }}
                 >
                   <div
-                    className="w-1.5 h-1.5 rounded-full"
+                    className="w-1.5 h-1.5 rounded-full animate-ping"
                     style={{ backgroundColor: step.color }}
                   />
                 </div>
 
                 {/* Card Container */}
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, margin: "-30px" }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="glass-card p-5 sm:p-6 rounded-2xl flex flex-col border border-white/10 hover:border-primary/40 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 relative group overflow-hidden"
-                >
+                <div className="process-fade-item glass-card p-5 sm:p-6 rounded-2xl flex flex-col border border-white/10 hover:border-primary/40 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 relative group overflow-hidden transform-gpu">
                   {/* Top Accent Gradient Border */}
                   <div
                     className={`absolute top-0 inset-x-0 h-1 bg-gradient-to-r ${step.gradient} opacity-50 group-hover:opacity-100 transition-opacity duration-300`}
@@ -325,26 +349,19 @@ const WorkProcess = () => {
                   <p className="text-gray-400 text-xs sm:text-sm leading-relaxed text-justify">
                     {step.description}
                   </p>
-                </motion.div>
+                </div>
               </div>
             );
           })}
         </div>
 
-        {/* DESKTOP VIEW (lg:block): Horizontal 4-in-a-row layout with traveling laser light */}
+        {/* DESKTOP VIEW (lg:block): Horizontal 4-in-a-row layout with pure CSS traveling laser light */}
         <div className="hidden lg:block relative">
           {/* Connecting Laser Beam Line */}
-          <div className="absolute top-[52px] left-[10%] right-[10%] h-[2px] bg-white/10 z-0">
-            <motion.div
-              className="h-full w-36 bg-gradient-to-r from-transparent via-cyan-400 to-transparent blur-[1px] shadow-[0_0_15px_#22d3ee]"
-              animate={{
-                x: ["-100%", "750%"]
-              }}
-              transition={{
-                duration: 3.5,
-                repeat: Infinity,
-                ease: "linear"
-              }}
+          <div className="absolute top-[52px] left-[10%] right-[10%] h-[2px] bg-white/10 z-0 overflow-hidden">
+            <div
+              style={{ animation: 'laser-beam 3.5s linear infinite' }}
+              className="h-full w-36 bg-gradient-to-r from-transparent via-cyan-400 to-transparent blur-[1px] shadow-[0_0_15px_#22d3ee] transform-gpu"
             />
           </div>
 
@@ -353,13 +370,9 @@ const WorkProcess = () => {
             {workflowSteps.map((step, index) => {
               const StepIconComponent = step.icon;
               return (
-                <motion.div
+                <div
                   key={step.step}
-                  initial={{ opacity: 0, y: 35 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-40px" }}
-                  transition={{ duration: 0.5, delay: index * 0.15 }}
-                  className="glass-card p-6 rounded-2xl flex flex-col h-full border border-white/10 hover:border-primary/40 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/10 relative group overflow-hidden"
+                  className="process-fade-item glass-card p-6 rounded-2xl flex flex-col h-full border border-white/10 hover:border-primary/40 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/10 relative group overflow-hidden transform-gpu"
                 >
                   {/* Top Accent Gradient Border Glow */}
                   <div
@@ -377,36 +390,10 @@ const WorkProcess = () => {
                     {/* Glowing Dot + Step Number */}
                     <div className="flex items-center gap-2.5">
                       <div className="relative flex items-center justify-center w-5 h-5">
-                        <motion.div
-                          className="absolute inset-0 rounded-full blur-sm"
+                        <div
+                          className="absolute inset-0 rounded-full blur-sm opacity-50 animate-pulse"
                           style={{ backgroundColor: step.color }}
-                          animate={{
-                            scale: [1, 1.9, 1],
-                            opacity: [0.35, 0.85, 0.35],
-                          }}
-                          transition={{
-                            duration: 2.2,
-                            repeat: Infinity,
-                            delay: index * 0.55,
-                            ease: "easeInOut",
-                          }}
                         />
-
-                        <motion.div
-                          className="absolute w-2.5 h-2.5 rounded-full"
-                          style={{ backgroundColor: step.color }}
-                          animate={{
-                            scale: [1, 2.4],
-                            opacity: [0.75, 0],
-                          }}
-                          transition={{
-                            duration: 1.8,
-                            repeat: Infinity,
-                            delay: index * 0.55,
-                            ease: "easeOut",
-                          }}
-                        />
-
                         <div
                           className="relative w-2.5 h-2.5 rounded-full z-10"
                           style={{
@@ -464,7 +451,7 @@ const WorkProcess = () => {
                       </span>
                     )}
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </div>

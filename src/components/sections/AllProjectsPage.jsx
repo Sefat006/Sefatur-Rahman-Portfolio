@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Sparkles } from 'lucide-react';
 import { projectsData } from '../../data/projectsData';
 import ProjectCard from './projects/ProjectCard';
@@ -46,16 +45,16 @@ const AllProjectsPage = ({ onBack }) => {
       <StarsGalaxyBackground />
 
       {/* Decorative ambient gradient glows */}
-      <div className="fixed top-[-150px] left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-primary/20 blur-[130px] rounded-full pointer-events-none -z-10" />
-      <div className="fixed bottom-0 right-0 w-[500px] h-[400px] bg-purple-600/10 blur-[140px] rounded-full pointer-events-none -z-10" />
+      <div className="fixed top-[-150px] left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-primary/20 blur-[130px] rounded-full pointer-events-none -z-10 transform-gpu" />
+      <div className="fixed bottom-0 right-0 w-[500px] h-[400px] bg-purple-600/10 blur-[140px] rounded-full pointer-events-none -z-10 transform-gpu" />
 
       {/* Top Navigation Bar */}
-      <header className="sticky top-0 z-40 w-full backdrop-blur-xl bg-black/50 border-b border-white/10">
+      <header className="sticky top-0 z-40 w-full bg-[#050505]/98 md:bg-black/50 md:backdrop-blur-xl border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-4 flex items-center justify-between">
           <button
             type="button"
             onClick={handleBackToHome}
-            className="group flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-primary/20 border border-white/10 hover:border-primary/40 text-gray-300 hover:text-white transition-all duration-300 text-sm font-medium active:scale-95"
+            className="group flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-primary/20 border border-white/10 hover:border-primary/40 text-gray-300 hover:text-white transition-all duration-300 text-sm font-medium active:scale-95 cursor-pointer"
           >
             <ArrowLeft size={16} className="text-primary group-hover:-translate-x-1 transition-transform duration-200" />
             <span>Back to Portfolio</span>
@@ -73,12 +72,7 @@ const AllProjectsPage = ({ onBack }) => {
       {/* Main Content Area */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-12 md:py-20 relative z-10">
         {/* Header Section */}
-        <motion.div 
-          initial={{ opacity: 0, y: 25 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center max-w-3xl mx-auto mb-12 sm:mb-16"
-        >
+        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/25 text-primary text-xs font-semibold uppercase tracking-wider mb-4 shadow-[0_0_15px_rgba(139,92,246,0.2)]">
             <Sparkles size={14} />
             <span>Complete Project Archive</span>
@@ -91,7 +85,7 @@ const AllProjectsPage = ({ onBack }) => {
           <p className="text-gray-400 text-sm sm:text-base md:text-lg leading-relaxed">
             A comprehensive catalog of enterprise applications, full-stack web platforms, client solutions, and customized software systems built with modern technologies.
           </p>
-        </motion.div>
+        </div>
 
         {/* Category Filters */}
         <div className="flex items-center justify-center flex-wrap gap-2 sm:gap-2.5 mb-12">
@@ -106,7 +100,7 @@ const AllProjectsPage = ({ onBack }) => {
                 key={category}
                 type="button"
                 onClick={() => setActiveCategory(category)}
-                className={`relative px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all duration-300 flex items-center gap-2 border ${
+                className={`relative px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all duration-300 flex items-center gap-2 border cursor-pointer ${
                   isActive 
                     ? 'bg-gradient-to-r from-primary to-purple-600 text-white border-primary/50 shadow-[0_0_20px_rgba(139,92,246,0.35)]' 
                     : 'bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white border-white/10'
@@ -123,22 +117,17 @@ const AllProjectsPage = ({ onBack }) => {
           })}
         </div>
 
-        {/* Projects Grid: Identical style to homepage */}
-        <motion.div 
-          layout
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 perspective-[1500px]"
-        >
-          <AnimatePresence>
-            {filteredProjects.map((project, idx) => (
-              <ProjectCard 
-                key={project.id} 
-                project={project} 
-                index={idx} 
-                onSelectProject={setSelectedProject} 
-              />
-            ))}
-          </AnimatePresence>
-        </motion.div>
+        {/* Projects Grid: Pure CSS responsive grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          {filteredProjects.map((project, idx) => (
+            <ProjectCard 
+              key={project.id} 
+              project={project} 
+              index={idx} 
+              onSelectProject={setSelectedProject} 
+            />
+          ))}
+        </div>
 
         {/* Bottom Back Button & Footer CTA */}
         <div className="mt-16 sm:mt-24 pt-10 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
@@ -149,7 +138,7 @@ const AllProjectsPage = ({ onBack }) => {
           <button
             type="button"
             onClick={handleBackToHome}
-            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-500 text-white font-medium text-sm transition-all duration-300 shadow-lg shadow-primary/20 active:scale-95"
+            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-500 text-white font-medium text-sm transition-all duration-300 shadow-lg shadow-primary/20 active:scale-95 cursor-pointer"
           >
             <ArrowLeft size={16} />
             <span>Return to Portfolio</span>

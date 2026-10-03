@@ -1,23 +1,18 @@
 import React, { useRef, useEffect } from "react";
-import { motion } from "framer-motion";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "./About.css";
 import myPhoto from "../../../assets/me.webp";
 
-gsap.registerPlugin(ScrollTrigger);
-
 const About = () => {
-  const container = useRef();
+  const container = useRef(null);
   const canvasRef = useRef(null);
 
-  // Smooth Lower-Light Gravity Particle Animation
+  // Smooth Lower-Light Gravity Particle Animation with IntersectionObserver pause
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     let animationFrameId;
+    let isVisible = true;
 
     let width = (canvas.width = canvas.offsetWidth);
     let height = (canvas.height = canvas.offsetHeight);
@@ -27,7 +22,7 @@ const About = () => {
       width = canvas.width = canvas.offsetWidth;
       height = canvas.height = canvas.offsetHeight;
     };
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResize, { passive: true });
 
     const mouse = { x: -2000, y: -2000, active: false };
     const handleMouseMove = (e) => {
@@ -44,12 +39,13 @@ const About = () => {
 
     const sectionEl = container.current;
     if (sectionEl) {
-      sectionEl.addEventListener("mousemove", handleMouseMove);
-      sectionEl.addEventListener("mouseleave", handleMouseLeave);
+      sectionEl.addEventListener("mousemove", handleMouseMove, { passive: true });
+      sectionEl.addEventListener("mouseleave", handleMouseLeave, { passive: true });
     }
 
     // Soft dim particles (subtle lower-light)
-    const particleCount = 45;
+    const isMobile = window.innerWidth < 768;
+    const particleCount = isMobile ? 18 : 40;
     const colors = [
       "rgba(255, 255, 255,",
       "rgba(168, 85, 247,",
@@ -60,26 +56,24 @@ const About = () => {
       x: Math.random() * width,
       y: Math.random() * height,
       vx: (Math.random() - 0.5) * 0.3,
-      vy: Math.random() * 0.4 + 0.15, // gentle downward drift
+      vy: Math.random() * 0.4 + 0.15,
       baseRadius: Math.random() * 1.5 + 0.8,
-      baseAlpha: Math.random() * 0.2 + 0.12, // low light opacity
+      baseAlpha: Math.random() * 0.2 + 0.12,
       color: colors[Math.floor(Math.random() * colors.length)],
       mass: Math.random() * 1.2 + 0.8
     }));
 
     const render = () => {
+      if (!isVisible) return;
       ctx.clearRect(0, 0, width, height);
 
-      const gravity = 0.012; // gentle cosmic gravity
-      const friction = 0.988; // smooth air drag
+      const gravity = 0.012;
+      const friction = 0.988;
 
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
-
-        // Apply gentle gravity pull
         p.vy += gravity * p.mass;
 
-        // Mouse gravitational attraction (gravitational well)
         if (mouse.active) {
           const dx = mouse.x - p.x;
           const dy = mouse.y - p.y;
@@ -99,7 +93,6 @@ const About = () => {
         p.x += p.vx;
         p.y += p.vy;
 
-        // Wrap around smoothly when falling past bottom
         if (p.y > height + 10) {
           p.y = -10;
           p.x = Math.random() * width;
@@ -109,13 +102,11 @@ const About = () => {
         if (p.x < -10) p.x = width + 10;
         if (p.x > width + 10) p.x = -10;
 
-        // Draw soft low-light particle
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.baseRadius, 0, Math.PI * 2);
         ctx.fillStyle = `${p.color} ${p.baseAlpha})`;
         ctx.fill();
 
-        // Connect very close particles with faint gravity threads
         for (let j = i + 1; j < particles.length; j++) {
           const p2 = particles[j];
           const cdx = p.x - p2.x;
@@ -137,9 +128,21 @@ const About = () => {
       animationFrameId = requestAnimationFrame(render);
     };
 
+    const observer = new IntersectionObserver(([entry]) => {
+      isVisible = entry.isIntersecting;
+      if (isVisible) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = requestAnimationFrame(render);
+      } else {
+        cancelAnimationFrame(animationFrameId);
+      }
+    }, { threshold: 0.05 });
+
+    if (canvas) observer.observe(canvas);
     render();
 
     return () => {
+      observer.disconnect();
       window.removeEventListener("resize", handleResize);
       if (sectionEl) {
         sectionEl.removeEventListener("mousemove", handleMouseMove);
@@ -149,75 +152,69 @@ const About = () => {
     };
   }, []);
 
-  useGSAP(
-    () => {
-      gsap.from(".about-content", {
-        scrollTrigger: {
-          trigger: container.current,
-          start: "top 80%",
-        },
-        y: 30,
-        opacity: 0,
-        duration: 1,
-        stagger: 0.2,
-        ease: "power3.out",
+  // Pure IntersectionObserver for smooth fade-in entrance
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.remove("opacity-0", "translate-y-4");
+            entry.target.classList.add("opacity-100", "translate-y-0");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        rootMargin: "100px 0px 0px 0px",
+        threshold: 0.01,
+      }
+    );
+
+    if (container.current) {
+      const items = container.current.querySelectorAll(".about-fade-item");
+      items.forEach((item, index) => {
+        item.classList.add("opacity-0", "translate-y-4", "transition-all", "duration-400", "ease-out");
+        item.style.transitionDelay = `${index * 80}ms`;
+        observer.observe(item);
       });
-    },
-    { scope: container },
-  );
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <section id="about" ref={container} className="py-16 lg:py-20 relative z-10 overflow-hidden bg-gradient-to-b from-transparent via-primary/[0.03] to-transparent">
       {/* Subtle Low-Light Gravity Background Canvas */}
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full pointer-events-none z-0"
+        className="absolute inset-0 w-full h-full pointer-events-none z-0 transform-gpu"
+        style={{ transform: 'translateZ(0)' }}
       />
 
-      {/* ===== Aurora ArtifyOrb Style Gradient Background ===== */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+      {/* ===== Pure CSS Aurora Gradient Background (Zero CPU Loop) ===== */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 transform-gpu" style={{ transform: 'translateZ(0)' }}>
         {/* Orb 1: Emerald / Mint Northern Lights */}
-        <motion.div
-          animate={{
-            x: [0, 40, -25, 0],
-            y: [0, -35, 25, 0],
-            scale: [1, 1.15, 0.95, 1],
-          }}
-          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -top-16 left-1/4 w-[420px] h-[420px] rounded-full bg-gradient-to-tr from-emerald-500/30 via-teal-400/20 to-cyan-500/10 blur-[100px] mix-blend-screen"
+        <div
+          style={{ animation: 'float-slow 14s ease-in-out infinite alternate' }}
+          className="absolute -top-16 left-1/4 w-[380px] h-[380px] sm:w-[420px] sm:h-[420px] rounded-full bg-gradient-to-tr from-emerald-500/25 via-teal-400/15 to-cyan-500/10 blur-[80px] sm:blur-[100px] mix-blend-screen transform-gpu"
         />
 
         {/* Orb 2: Deep Purple / Violet Galaxy */}
-        <motion.div
-          animate={{
-            x: [0, -45, 30, 0],
-            y: [0, 40, -30, 0],
-            scale: [1, 0.9, 1.1, 1],
-          }}
-          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute top-1/4 -left-12 w-[480px] h-[480px] rounded-full bg-gradient-to-br from-primary/30 via-purple-600/25 to-indigo-700/15 blur-[110px] mix-blend-screen"
+        <div
+          style={{ animation: 'float-slow 16s ease-in-out infinite 2s alternate-reverse' }}
+          className="absolute top-1/4 -left-12 w-[400px] h-[400px] sm:w-[480px] sm:h-[480px] rounded-full bg-gradient-to-br from-primary/25 via-purple-600/20 to-indigo-700/15 blur-[85px] sm:blur-[110px] mix-blend-screen transform-gpu"
         />
 
         {/* Orb 3: Cyan / Electric Blue Ribbon */}
-        <motion.div
-          animate={{
-            x: [0, 35, -40, 0],
-            y: [0, -25, 35, 0],
-            scale: [1, 1.12, 0.92, 1],
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          className="absolute -bottom-16 right-1/6 w-[450px] h-[450px] rounded-full bg-gradient-to-tl from-secondary/30 via-cyan-400/20 to-blue-600/15 blur-[105px] mix-blend-screen"
+        <div
+          style={{ animation: 'float-slow 18s ease-in-out infinite 4s alternate' }}
+          className="absolute -bottom-16 right-1/6 w-[380px] h-[380px] sm:w-[450px] sm:h-[450px] rounded-full bg-gradient-to-tl from-secondary/25 via-cyan-400/15 to-blue-600/10 blur-[85px] sm:blur-[105px] mix-blend-screen transform-gpu"
         />
 
         {/* Orb 4: Rose / Magenta Aurora Wave */}
-        <motion.div
-          animate={{
-            x: [0, -30, 35, 0],
-            y: [0, 30, -35, 0],
-            scale: [0.95, 1.15, 1, 0.95],
-          }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 3 }}
-          className="absolute top-1/2 right-12 w-[380px] h-[380px] rounded-full bg-gradient-to-r from-pink-500/25 via-fuchsia-600/20 to-purple-500/10 blur-[95px] mix-blend-screen"
+        <div
+          style={{ animation: 'float-slow 15s ease-in-out infinite 1s alternate-reverse' }}
+          className="absolute top-1/2 right-12 w-[320px] h-[320px] sm:w-[380px] sm:h-[380px] rounded-full bg-gradient-to-r from-pink-500/20 via-fuchsia-600/15 to-purple-500/10 blur-[75px] sm:blur-[95px] mix-blend-screen transform-gpu"
         />
 
         {/* Dynamic Wave Curtain Mesh */}
@@ -227,15 +224,16 @@ const About = () => {
       <div className="container mx-auto px-6 lg:px-12 relative z-10">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
           {/* Left Side: 3D Pop-out Circle */}
-          <div className="flex-1 about-content flex justify-center items-center pt-8 sm:pt-10 lg:pt-0">
+          <div className="about-fade-item flex-1 flex justify-center items-center pt-8 sm:pt-10 lg:pt-0">
             <div className="relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 flex items-end justify-center">
               {/* 1. Nicher Circle (Jeta shudhu body ke clip korbe) */}
-              <div className="absolute inset-0 rounded-full border-2 border-white/20 overflow-hidden">
+              <div className="absolute inset-0 rounded-full border-2 border-white/20 overflow-hidden shadow-2xl">
                 {/* Circle Layer Image */}
                 <img
                   src={myPhoto}
                   alt="Profile Inside"
                   className="w-full h-full object-cover object-top scale-150 translate-y-4"
+                  loading="lazy"
                 />
               </div>
 
@@ -245,21 +243,22 @@ const About = () => {
                 alt="Profile Popout"
                 className="relative z-10 w-full h-full object-cover object-top scale-150 translate-y-4 pointer-events-none"
                 style={{
-                  clipPath: "polygon(0 -50%, 100% -50%, 100% 50%, 0 50%)", // Shudhu Matha ebong Upper Body 3D hoye baire ashbe
+                  clipPath: "polygon(0 -50%, 100% -50%, 100% 50%, 0 50%)",
                   WebkitClipPath: "polygon(0 -50%, 100% -50%, 100% 50%, 0 50%)",
                 }}
+                loading="lazy"
               />
             </div>
           </div>
 
           <div className="flex-1">
-            <h2 className="about-content text-3xl md:text-5xl text-center lg:text-start font-bold mb-6">
+            <h2 className="about-fade-item text-3xl md:text-5xl text-center lg:text-start font-bold mb-6">
               About{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-400 to-secondary">
                 Me
               </span>
             </h2>
-            <div className="about-content space-y-6 text-gray-400 text-justify text-lg leading-relaxed">
+            <div className="about-fade-item space-y-6 text-gray-400 text-justify text-lg leading-relaxed">
               <p>
                 Hi! I'm a final-year Computer Science student. I am naturally
                 curious and love exploring new technology. My approach is
@@ -276,7 +275,7 @@ const About = () => {
               </p>
               {/* Stat Cards with Gradient Glassmorphism (side-by-side on all screens) */}
               <div className="pt-6 grid grid-cols-2 max-w-sm sm:max-w-md mx-auto lg:mx-0 text-center gap-3 sm:gap-6">
-                <div className="px-3 sm:px-6 py-3 sm:py-4 rounded-2xl bg-gradient-to-b from-white/10 via-white/5 to-transparent border border-white/10 shadow-lg backdrop-blur-md hover:border-primary/40 transition-colors flex flex-col items-center justify-center">
+                <div className="px-3 sm:px-6 py-3 sm:py-4 rounded-2xl bg-gradient-to-b from-white/10 via-white/5 to-transparent border border-white/10 shadow-lg md:backdrop-blur-md hover:border-primary/40 transition-colors flex flex-col items-center justify-center transform-gpu">
                   <h4 className="text-2xl sm:text-3xl font-bold mb-1 text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-300 to-white">
                     7+
                   </h4>
@@ -284,7 +283,7 @@ const About = () => {
                     Projects Completed
                   </p>
                 </div>
-                <div className="px-3 sm:px-6 py-3 sm:py-4 rounded-2xl bg-gradient-to-b from-white/10 via-white/5 to-transparent border border-white/10 shadow-lg backdrop-blur-md hover:border-secondary/40 transition-colors flex flex-col items-center justify-center">
+                <div className="px-3 sm:px-6 py-3 sm:py-4 rounded-2xl bg-gradient-to-b from-white/10 via-white/5 to-transparent border border-white/10 shadow-lg md:backdrop-blur-md hover:border-secondary/40 transition-colors flex flex-col items-center justify-center transform-gpu">
                   <h4 className="text-2xl sm:text-3xl font-bold mb-1 text-transparent bg-clip-text bg-gradient-to-r from-secondary via-cyan-300 to-white">
                     100%
                   </h4>

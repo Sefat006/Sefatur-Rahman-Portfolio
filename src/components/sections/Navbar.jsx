@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { 
   Menu, 
   X, 
@@ -31,12 +30,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ type: "spring", stiffness: 100, damping: 15 }}
-      className="sticky top-0 z-50 w-full backdrop-blur-md bg-black/40 border-b border-gray-800"
-    >
+    <header className="sticky top-0 z-50 w-full bg-[#050505]/98 md:bg-black/40 md:backdrop-blur-md border-b border-gray-800 transition-all duration-300">
       <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 max-w-7xl mx-auto">
         {/* Logo Slot with Branded Loader S Icon */}
         <a 
@@ -85,12 +79,7 @@ const Navbar = () => {
 
       {/* Mobile Menu Content with Icons */}
       {isOpen && (
-        <motion.div 
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          className="lg:hidden border-t border-gray-800 bg-black/90 backdrop-blur-xl"
-        >
+        <div className="lg:hidden border-t border-gray-800 bg-[#050505]/98 transition-all duration-200 animate-[fadeIn_0.2s_ease-out]">
           <div className="flex flex-col px-6 py-4 space-y-2 text-gray-300">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -114,9 +103,9 @@ const Navbar = () => {
               <ResumeButton onClick={() => setIsOpen(false)} />
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
-    </motion.header>
+    </header>
   );
 };
 

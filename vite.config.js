@@ -13,9 +13,6 @@ export default defineConfig({
             if (id.includes('three') || id.includes('@react-three')) {
               return 'three-vendor';
             }
-            if (id.includes('framer-motion') || id.includes('gsap')) {
-              return 'animation-vendor';
-            }
             return 'vendor';
           }
         }

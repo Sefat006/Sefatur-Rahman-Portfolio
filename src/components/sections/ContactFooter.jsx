@@ -19,16 +19,19 @@ const ContactFooter = () => {
           }
         });
       },
-      { threshold: 0.1 }
+      { 
+        rootMargin: '0px 0px 220px 0px', // Pre-triggers 220px before entering viewport bottom
+        threshold: 0 
+      }
     );
 
     if (container.current) {
       const items = container.current.querySelectorAll('.contact-item');
       items.forEach((item, index) => {
         // Initial state before animation triggers
-        item.classList.add('opacity-0', 'translate-y-8', 'transition-all', 'duration-700', 'ease-out');
+        item.classList.add('opacity-0', 'translate-y-3', 'transition-all', 'duration-300', 'ease-out');
         // Stagger effect
-        item.style.transitionDelay = `${index * 150}ms`;
+        item.style.transitionDelay = `${index * 40}ms`;
         observer.observe(item);
       });
     }

@@ -17,8 +17,8 @@ const GlobeScene = ({ inView }) => {
     lineColors,
   } = useMemo(() => {
     const RADIUS = 1.35;
-    const SURFACE_COUNT = 620;
-    const FLOATING_COUNT = 90;
+    const SURFACE_COUNT = typeof window !== 'undefined' && window.innerWidth < 768 ? Math.floor(620 * 0.35) : 620;
+    const FLOATING_COUNT = typeof window !== 'undefined' && window.innerWidth < 768 ? Math.floor(90 * 0.35) : 90;
     const MAX_CONNECTION_DISTANCE = 0.8;
 
     // Gradient Palette: Electric Cyan -> Primary Purple -> Cosmic Pink
@@ -263,7 +263,7 @@ const ParticleGlobe = ({ className = 'w-full h-full' }) => {
   }, []);
 
   return (
-    <div ref={containerRef} className={`relative ${className} pointer-events-none`}>
+    <div ref={containerRef} className={`relative ${className} pointer-events-none transform-gpu`} style={{ transform: 'translateZ(0)' }}>
       <Canvas
         frameloop={inView ? 'always' : 'never'}
         dpr={Math.min(window.devicePixelRatio || 1, 1.5)}

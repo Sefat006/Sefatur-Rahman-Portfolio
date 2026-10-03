@@ -13,10 +13,10 @@
 
 @layer utilities {
   .glass {
-    @apply bg-white/5 backdrop-blur-lg border border-white/10;
+    @apply bg-[#0b0b12]/95 md:bg-white/5 md:backdrop-blur-lg border border-white/10;
   }
   .glass-card {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl hover:shadow-primary/20 transition-all duration-300;
+    @apply bg-[#0b0b12]/95 md:bg-white/5 md:backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl hover:shadow-primary/20 transition-all duration-300;
   }
   .text-glow {
     text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
@@ -62,3 +62,56 @@
   animation-play-state: paused;
 }
 
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1.5deg);
+  }
+}
+
+@keyframes laser-beam {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(850%);
+  }
+}
+
+@keyframes shooting-star {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  2% {
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  18% {
+    transform: translate3d(550px, 0, 0);
+    opacity: 1;
+  }
+  22% {
+    transform: translate3d(700px, 0, 0);
+    opacity: 0;
+  }
+  100% {
+    transform: translate3d(700px, 0, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes mouse-wheel {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(8px);
+    opacity: 1;
+  }
+}

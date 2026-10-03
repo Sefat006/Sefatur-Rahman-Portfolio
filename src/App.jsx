@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { AnimatePresence } from 'framer-motion';
 import Loader from './components/ui/Loader';
 import Navbar from './components/sections/Navbar';
 import Hero from './components/sections/Hero';
@@ -76,9 +75,7 @@ function App() {
 
   return (
     <div className="min-h-screen text-white font-sans selection:bg-primary/30">
-      <AnimatePresence mode="wait">
-        {loading && <Loader key="page-loader" />}
-      </AnimatePresence>
+      {loading && <Loader />}
 
       {currentPage === 'all-projects' ? (
         <AllProjectsPage onBack={navigateToHome} />

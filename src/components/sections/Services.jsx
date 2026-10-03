@@ -1,11 +1,10 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { 
-  Code2, 
-  Palette, 
-  SearchCheck, 
-  Wrench, 
-  Sparkles, 
+import React, { useRef, useEffect } from 'react';
+import {
+  Code2,
+  Palette,
+  SearchCheck,
+  Wrench,
+  Sparkles,
   ArrowUpRight
 } from 'lucide-react';
 
@@ -77,20 +76,45 @@ const servicesData = [
 ];
 
 const Services = () => {
+  const container = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.remove('opacity-0', 'translate-y-4');
+            entry.target.classList.add('opacity-100', 'translate-y-0');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        rootMargin: '100px 0px 0px 0px',
+        threshold: 0.01
+      }
+    );
+
+    if (container.current) {
+      const items = container.current.querySelectorAll('.service-fade-item');
+      items.forEach((item, index) => {
+        item.classList.add('opacity-0', 'translate-y-4', 'transition-all', 'duration-400', 'ease-out');
+        item.style.transitionDelay = `${index * 60}ms`;
+        observer.observe(item);
+      });
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section id="services" className="py-20 lg:py-24 relative z-10 overflow-hidden">
+    <section id="services" ref={container} className="py-20 lg:py-24 relative z-10 overflow-hidden">
       {/* Background Ambient Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-primary/10 rounded-full blur-[140px] pointer-events-none -z-0" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-primary/10 rounded-full blur-[140px] pointer-events-none -z-0 transform-gpu" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
         {/* Section Heading */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
+        <div className="service-fade-item text-center mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold uppercase tracking-wider mb-3">
             <Sparkles size={14} />
             <span>What I Offer</span>
@@ -101,26 +125,22 @@ const Services = () => {
           <p className="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
             High-impact web engineering solutions tailored to scale businesses, enhance digital experiences, and drive measurable results.
           </p>
-        </motion.div>
+        </div>
 
         {/* 2 Cards per row on mobile, 4 on desktop */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-          {servicesData.map((service, index) => (
-            <motion.div
+          {servicesData.map((service) => (
+            <div
               key={service.id}
-              initial={{ opacity: 0, y: 35 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="glass-card p-3.5 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl flex flex-col h-full border border-white/10 hover:border-primary/40 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/10 relative group overflow-hidden"
+              className="service-fade-item glass-card p-3.5 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl flex flex-col h-full border border-white/10 hover:border-primary/40 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/10 relative group overflow-hidden transform-gpu"
             >
               {/* Top Accent Gradient Border Glow */}
-              <div 
-                className={`absolute top-0 inset-x-0 h-1 bg-gradient-to-r ${service.gradient} opacity-40 group-hover:opacity-100 transition-opacity duration-300`} 
+              <div
+                className={`absolute top-0 inset-x-0 h-1 bg-gradient-to-r ${service.gradient} opacity-40 group-hover:opacity-100 transition-opacity duration-300`}
               />
 
               {/* Ambient Card Backlight */}
-              <div 
+              <div
                 className="absolute -top-12 -right-12 w-32 h-32 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                 style={{ backgroundColor: service.glowColor }}
               />
@@ -152,7 +172,7 @@ const Services = () => {
                   </span>
                 ))}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

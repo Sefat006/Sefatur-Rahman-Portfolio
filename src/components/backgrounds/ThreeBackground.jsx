@@ -18,7 +18,7 @@ const ThreeBackground = () => {
     
     let animationFrameId;
     let particles = [];
-    const PARTICLE_COUNT = 50;
+    const PARTICLE_COUNT = typeof window !== 'undefined' && window.innerWidth < 768 ? Math.floor(50 * 0.35) : 50;
     
     // Track mouse position globally since canvas has pointer-events-none
     let mouse = { x: -1000, y: -1000 };
@@ -67,9 +67,9 @@ const ThreeBackground = () => {
       mouse.y = -1000;
     };
 
-    window.addEventListener('resize', resizeCanvas);
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseout', handleMouseLeave);
+    window.addEventListener('resize', resizeCanvas, { passive: true });
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    window.addEventListener('mouseout', handleMouseLeave, { passive: true });
     
     resizeCanvas();
     initParticles();
@@ -154,7 +154,7 @@ const ThreeBackground = () => {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0">
+    <div className="fixed inset-0 pointer-events-none z-0 transform-gpu" style={{ transform: 'translateZ(0)' }}>
       <canvas
         ref={canvasRef}
         className="w-full h-full pointer-events-none"

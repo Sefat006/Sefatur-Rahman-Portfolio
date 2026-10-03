@@ -1,5 +1,4 @@
-import React, { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import React, { useRef, useEffect } from "react";
 import ParticleGlobe from "../backgrounds/ParticleGlobe";
 
 const experienceData = [
@@ -39,7 +38,7 @@ const experienceData = [
     description:
       "Learned professional video editing using Adobe Premiere Pro at the creative agency 'Photo Factory', working on commercial and creative video editing projects.",
   },
-    {
+  {
     id: 5,
     title: "CSE Student & Problem Solver",
     subtitle: "Academic Journey & DSA",
@@ -52,15 +51,78 @@ const experienceData = [
 
 const Experience = () => {
   const containerRef = useRef(null);
+  const dotRef = useRef(null);
+  const fillLineRef = useRef(null);
 
-  // Scroll animation track korar jonno Framer Motion er useScroll
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start center", "end center"],
-  });
+  // Smooth scroll tracking for the vertical timeline dot and glowing fill line
+  useEffect(() => {
+    let ticking = false;
 
-  // Glowing dot er vertical movement (up-down) scroll er sathe
-  const dotPosition = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+    const updateScrollProgress = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+
+      // Start when container top enters 65% of viewport, reach end at 40%
+      const startPoint = windowHeight * 0.65;
+      const endPoint = windowHeight * 0.4;
+      const totalDistance = rect.height + (startPoint - endPoint);
+      const currentDistance = startPoint - rect.top;
+
+      const progress = Math.min(Math.max(currentDistance / totalDistance, 0), 1);
+      const percentage = `${progress * 100}%`;
+
+      if (dotRef.current) {
+        dotRef.current.style.top = percentage;
+      }
+      if (fillLineRef.current) {
+        fillLineRef.current.style.height = percentage;
+      }
+
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(updateScrollProgress);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    updateScrollProgress();
+
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.remove('opacity-0', 'translate-y-2');
+            entry.target.classList.add('opacity-100', 'translate-y-0');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        rootMargin: '100px 0px 0px 0px',
+        threshold: 0.01,
+      }
+    );
+
+    if (containerRef.current) {
+      const items = containerRef.current.querySelectorAll('.exp-fade-item');
+      items.forEach((item, index) => {
+        item.classList.add('opacity-0', 'translate-y-4', 'transition-all', 'duration-400', 'ease-out');
+        item.style.transitionDelay = `${index * 70}ms`;
+        observer.observe(item);
+      });
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <section
@@ -73,14 +135,7 @@ const Experience = () => {
       </div>
 
       {/* Subtle ambient center glow */}
-      <motion.div
-        animate={{
-          scale: [1, 1.08, 1],
-          opacity: [0.12, 0.22, 0.12],
-        }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/3 left-1/2 -translate-x-1/2 w-80 sm:w-96 md:w-[500px] h-80 sm:h-96 md:h-[500px] bg-purple-600/12 rounded-full blur-[140px] pointer-events-none z-0"
-      />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-80 sm:w-96 md:w-[500px] h-80 sm:h-96 md:h-[500px] bg-purple-600/10 rounded-full blur-[140px] pointer-events-none z-0 animate-pulse transform-gpu" />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
         {/* Section Heading */}
@@ -102,25 +157,36 @@ const Experience = () => {
           className="relative flex flex-col gap-5 sm:gap-6 md:gap-7"
         >
           {/* Main Vertical Timeline Track Line (In the back) */}
-          <div className="absolute left-4 sm:left-6 md:left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-purple-500/10 via-purple-500/40 to-transparent -translate-x-1/2 z-0 pointer-events-none" />
+          <div className="absolute left-4 sm:left-6 md:left-1/2 top-0 bottom-0 w-[2px] bg-white/10 -translate-x-1/2 z-0 pointer-events-none overflow-hidden">
+            {/* Active filled glowing line following the dot */}
+            <div
+              ref={fillLineRef}
+              className="absolute top-0 left-0 w-full bg-gradient-to-b from-purple-400 via-primary to-purple-500 shadow-[0_0_12px_rgba(168,85,247,0.7)]"
+              style={{ height: '0%' }}
+            />
+          </div>
 
           {/* Animated Glowing Dot attached to scroll */}
-          <motion.div
-            style={{ top: dotPosition }}
-            className="absolute left-4 sm:left-6 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-purple-400 shadow-[0_0_20px_6px_rgba(168,85,247,0.6)] z-10 pointer-events-none mt-2"
-          />
+          <div
+            ref={dotRef}
+            style={{ top: '0%' }}
+            className="absolute left-4 sm:left-6 md:left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-purple-400 shadow-[0_0_20px_6px_rgba(168,85,247,0.8)] z-10 pointer-events-none transform-gpu"
+          >
+            <span className="absolute inset-0 rounded-full bg-purple-400 animate-ping opacity-75" />
+            <span className="relative block w-full h-full rounded-full bg-white shadow-[0_0_8px_#ffffff]" />
+          </div>
 
           {/* Experience Items List - Direct visibility with right-side border only */}
           {experienceData.map((exp) => (
             <div
               key={exp.id}
-              className="relative w-full pl-10 sm:pl-14 md:pl-0 z-10"
+              className="exp-fade-item relative w-full pl-10 sm:pl-14 md:pl-0 z-10"
             >
               {/* Static Anchor Node on the timeline (In the back) */}
               <div className="absolute left-4 sm:left-6 md:left-1/2 -translate-x-1/2 top-5 md:top-1/2 md:-translate-y-1/2 w-3.5 h-3.5 rounded-full bg-[#0a0a0a] border-2 border-purple-500/70 shadow-[0_0_10px_rgba(168,85,247,0.4)] z-0" />
 
               {/* Experience Card with Right-side border only */}
-              <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between w-full p-4 sm:p-5 md:py-4 md:px-6 rounded-r-2xl border-r-2 sm:border-r-[3px] border-r-purple-500/50 hover:border-r-purple-400 bg-gradient-to-r from-transparent via-purple-950/[0.08] to-purple-900/[0.18] hover:to-purple-900/[0.28] transition-all duration-300 shadow-[4px_0_15px_-3px_rgba(168,85,247,0.15)] hover:shadow-[6px_0_25px_-2px_rgba(168,85,247,0.35)] group">
+              <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between w-full p-4 sm:p-5 md:py-4 md:px-6 rounded-r-2xl border-r-2 sm:border-r-[3px] border-r-purple-500/50 hover:border-r-purple-400 bg-gradient-to-r from-transparent via-purple-950/[0.08] to-purple-900/[0.18] hover:to-purple-900/[0.28] transition-all duration-300 shadow-[4px_0_15px_-3px_rgba(168,85,247,0.15)] hover:shadow-[6px_0_25px_-2px_rgba(168,85,247,0.35)] group transform-gpu">
                 {/* Mobile Year & Period Badge (Shown on mobile above title) */}
                 <div className="md:hidden flex flex-wrap items-center gap-2 mb-2">
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-purple-950/80 text-purple-300 border border-purple-500/40 shadow-[0_0_10px_rgba(168,85,247,0.3)]">
@@ -143,7 +209,7 @@ const Experience = () => {
 
                 {/* Center Column: Year & Period Badge (Desktop only, in front of the line) */}
                 <div className="hidden md:flex md:w-2/12 flex-col justify-center items-center z-10 relative">
-                  <div className="px-4 py-1 rounded-full bg-[#0d0d12]/95 border border-purple-500/40 shadow-[0_0_15px_rgba(168,85,247,0.35)] backdrop-blur-md">
+                  <div className="px-4 py-1 rounded-full bg-[#0d0d12]/95 border border-purple-500/40 shadow-[0_0_15px_rgba(168,85,247,0.35)] md:backdrop-blur-md">
                     <span className="text-base lg:text-lg font-bold tracking-wider text-gray-100">
                       {exp.year}
                     </span>

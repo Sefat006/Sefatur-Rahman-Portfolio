@@ -1,6 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import gsap from 'gsap';
 import { ExternalLink, Eye, ArrowUpRight } from 'lucide-react';
 import { FaGithub } from 'react-icons/fa';
 import Swal from 'sweetalert2';
@@ -52,46 +50,10 @@ const ProjectCard = ({ project, index = 0, onSelectProject }) => {
     }
   };
 
-  const handleCardMouseMove = (e) => {
-    const card = e.currentTarget;
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    
-    const rotateX = ((y - centerY) / centerY) * -6;
-    const rotateY = ((x - centerX) / centerX) * 6;
-
-    gsap.to(card, {
-      rotateX,
-      rotateY,
-      transformPerspective: 1000,
-      ease: "power1.out",
-      duration: 0.3
-    });
-  };
-
-  const handleCardMouseLeave = (e) => {
-    gsap.to(e.currentTarget, {
-      rotateX: 0,
-      rotateY: 0,
-      ease: "power3.out",
-      duration: 0.5
-    });
-  };
-
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 35 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-30px" }}
-      transition={{ duration: 0.5, delay: (index % 3) * 0.1 }}
+    <div 
       onClick={() => onSelectProject(project)}
-      className="project-card glass-card p-0 overflow-hidden flex flex-col h-full transform-gpu cursor-pointer hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 group relative"
-      onMouseMove={handleCardMouseMove}
-      onMouseLeave={handleCardMouseLeave}
+      className="project-card glass-card p-0 overflow-hidden flex flex-col h-full transform-gpu cursor-pointer border border-white/10 hover:border-primary/50 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_15px_30px_-10px_rgba(139,92,246,0.25)] group relative"
     >
       {/* Full Image Area - No padding, No border */}
       <div 
@@ -102,7 +64,7 @@ const ProjectCard = ({ project, index = 0, onSelectProject }) => {
           <img 
             src={project.image} 
             alt={project.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 transform-gpu"
             loading="lazy"
           />
         ) : (
@@ -205,7 +167,7 @@ const ProjectCard = ({ project, index = 0, onSelectProject }) => {
           </div>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 };
 

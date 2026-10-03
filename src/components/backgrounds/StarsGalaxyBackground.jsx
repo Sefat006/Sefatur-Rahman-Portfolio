@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
 
 /**
  * Stars Galaxy (Starfield) Component with Aurora Gradient Glows
@@ -20,6 +19,7 @@ const StarsGalaxyBackground = ({
   const canvasRef = useRef(null);
   const mouse = useRef({ x: 0.5, y: 0.5 });
   const starsRef = useRef([]);
+  const actualStars = typeof window !== 'undefined' && window.innerWidth < 768 ? Math.floor(stars * 0.35) : stars;
   const [isVisible, setIsVisible] = useState(false);
 
   // Activate starting from #projects downwards across all lower sections
@@ -40,7 +40,7 @@ const StarsGalaxyBackground = ({
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleScroll);
+    window.addEventListener('resize', handleScroll, { passive: true });
     handleScroll();
 
     return () => {
@@ -101,8 +101,11 @@ const StarsGalaxyBackground = ({
     };
 
     resize();
-    window.addEventListener('resize', resize);
-    starsRef.current = Array.from({ length: stars }, createStar);
+    window.addEventListener('resize', resize, { passive: true });
+    
+    // Scale stars density for mobile
+    const actualStars = typeof window !== 'undefined' && window.innerWidth < 768 ? Math.floor(stars * 0.35) : stars;
+    starsRef.current = Array.from({ length: actualStars }, createStar);
 
     const onMouseMove = (e) => {
       if (!canvas) return;
@@ -110,7 +113,7 @@ const StarsGalaxyBackground = ({
       mouse.current.x = clamp((e.clientX - rect.left) / rect.width, 0, 1);
       mouse.current.y = clamp((e.clientY - rect.top) / rect.height, 0, 1);
     };
-    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mousemove', onMouseMove, { passive: true });
 
     let raf = 0;
     let isAnimating = false;
@@ -229,56 +232,37 @@ const StarsGalaxyBackground = ({
 
   return (
     <div
-      className="fixed inset-0 pointer-events-none z-0 transition-opacity duration-700 ease-in-out overflow-hidden bg-[#050505]"
+      className="fixed inset-0 pointer-events-none z-0 transition-opacity duration-700 ease-in-out overflow-hidden bg-[#050505] transform-gpu"
       style={{
         opacity: isVisible ? 1 : 0,
         visibility: isVisible ? 'visible' : 'hidden',
+        transform: 'translateZ(0)'
       }}
     >
       {/* Aurora Ambient Gradient Layer Matching Experience Globe Colors (Cyan, Purple, Pink) */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Aurora Orb 1: Globe Primary Purple & Violet Wave */}
-        <motion.div
-          animate={{
-            x: [0, 50, -35, 0],
-            y: [0, -40, 35, 0],
-            scale: [1, 1.2, 0.95, 1],
-          }}
-          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -top-20 left-1/4 w-[540px] h-[540px] rounded-full bg-gradient-to-tr from-[#8b5cf6]/26 via-[#a855f7]/20 to-[#6366f1]/12 blur-[115px] mix-blend-screen"
+        <div
+          style={{ animation: 'float-slow 16s ease-in-out infinite alternate' }}
+          className="absolute -top-20 left-1/4 w-[540px] h-[540px] rounded-full bg-gradient-to-tr from-[#8b5cf6]/26 via-[#a855f7]/20 to-[#6366f1]/12 blur-[115px] mix-blend-screen transform-gpu"
         />
 
         {/* Aurora Orb 2: Globe Electric Cyan Wave */}
-        <motion.div
-          animate={{
-            x: [0, -45, 35, 0],
-            y: [0, 40, -30, 0],
-            scale: [1, 0.92, 1.16, 1],
-          }}
-          transition={{ duration: 22, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className="absolute top-1/3 -right-16 w-[560px] h-[560px] rounded-full bg-gradient-to-bl from-[#38bdf8]/24 via-[#06b6d4]/18 to-[#0284c7]/10 blur-[120px] mix-blend-screen"
+        <div
+          style={{ animation: 'float-slow 20s ease-in-out infinite 2s alternate-reverse' }}
+          className="absolute top-1/3 -right-16 w-[560px] h-[560px] rounded-full bg-gradient-to-bl from-[#38bdf8]/24 via-[#06b6d4]/18 to-[#0284c7]/10 blur-[120px] mix-blend-screen transform-gpu"
         />
 
         {/* Aurora Orb 3: Globe Cosmic Pink & Magenta Wave */}
-        <motion.div
-          animate={{
-            x: [0, 35, -45, 0],
-            y: [0, -35, 40, 0],
-            scale: [0.95, 1.18, 0.95, 0.95],
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          className="absolute -bottom-20 left-1/3 w-[500px] h-[500px] rounded-full bg-gradient-to-tl from-[#ec4899]/22 via-[#d946ef]/16 to-[#a855f7]/10 blur-[115px] mix-blend-screen"
+        <div
+          style={{ animation: 'float-slow 18s ease-in-out infinite 4s alternate' }}
+          className="absolute -bottom-20 left-1/3 w-[500px] h-[500px] rounded-full bg-gradient-to-tl from-[#ec4899]/22 via-[#d946ef]/16 to-[#a855f7]/10 blur-[115px] mix-blend-screen transform-gpu"
         />
 
         {/* Aurora Orb 4: Globe Cyan-Purple-Pink Flow */}
-        <motion.div
-          animate={{
-            x: [0, -35, 30, 0],
-            y: [0, 30, -35, 0],
-            scale: [1, 1.14, 0.92, 1],
-          }}
-          transition={{ duration: 24, repeat: Infinity, ease: "easeInOut", delay: 3 }}
-          className="absolute top-2/3 -left-16 w-[520px] h-[520px] rounded-full bg-gradient-to-r from-[#06b6d4]/20 via-[#8b5cf6]/18 to-[#ec4899]/14 blur-[120px] mix-blend-screen"
+        <div
+          style={{ animation: 'float-slow 22s ease-in-out infinite 1s alternate-reverse' }}
+          className="absolute top-2/3 -left-16 w-[520px] h-[520px] rounded-full bg-gradient-to-r from-[#06b6d4]/20 via-[#8b5cf6]/18 to-[#ec4899]/14 blur-[120px] mix-blend-screen transform-gpu"
         />
 
         {/* Smooth Vignette Frame (Balanced light, not too dark and not washed out) */}
