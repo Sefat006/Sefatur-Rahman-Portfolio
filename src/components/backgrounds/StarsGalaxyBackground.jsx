@@ -52,8 +52,16 @@ const StarsGalaxyBackground = ({
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const DPR = Math.min(window.devicePixelRatio || 1, 2);
+    
+    // Add requested WebGL-like options to 2d context for parity and performance
+    const ctx = canvas.getContext('2d', {
+      powerPreference: "high-performance",
+      antialias: true,
+      alpha: true
+    });
+    
+    // Cap DPR to 1.5 globally
+    const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
 
     const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 
@@ -105,7 +113,11 @@ const StarsGalaxyBackground = ({
     window.addEventListener('mousemove', onMouseMove);
 
     let raf = 0;
+    let isAnimating = false;
+
     const animate = () => {
+      if (!isAnimating) return;
+
       const w = canvas.width / DPR;
       const h = canvas.height / DPR;
 
@@ -175,10 +187,30 @@ const StarsGalaxyBackground = ({
       raf = requestAnimationFrame(animate);
     };
 
-    animate();
+    // IntersectionObserver to pause/resume animation loop
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (!isAnimating) {
+            isAnimating = true;
+            animate();
+          }
+        } else {
+          isAnimating = false;
+          cancelAnimationFrame(raf);
+        }
+      },
+      { threshold: 0 }
+    );
+
+    if (canvas.parentElement) {
+      observer.observe(canvas.parentElement);
+    }
 
     return () => {
+      isAnimating = false;
       cancelAnimationFrame(raf);
+      observer.disconnect();
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', onMouseMove);
     };
@@ -261,6 +293,7 @@ const StarsGalaxyBackground = ({
           height: '100%',
           display: 'block',
           background: 'transparent',
+          pointerEvents: 'none',
         }}
       />
     </div>

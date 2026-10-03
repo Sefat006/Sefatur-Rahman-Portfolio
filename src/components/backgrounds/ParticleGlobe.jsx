@@ -1,9 +1,9 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
 // Inner 3D Globe with rotating wireframe, surface gradient particles, floating nodes, and network connections
-const GlobeScene = () => {
+const GlobeScene = ({ inView }) => {
   const groupRef = useRef();
   const innerSphereRef = useRef();
 
@@ -118,6 +118,7 @@ const GlobeScene = () => {
 
   // Continuous auto-rotation on Y and X axes
   useFrame((_, delta) => {
+    if (!inView) return; // double ensure
     if (groupRef.current) {
       groupRef.current.rotation.y += delta * 0.18;
       groupRef.current.rotation.x += delta * 0.05;
@@ -240,9 +241,32 @@ const GlobeScene = () => {
  * Multi-color gradient particles (Cyan -> Primary Purple -> Cosmic Pink).
  */
 const ParticleGlobe = ({ className = 'w-full h-full' }) => {
+  const containerRef = useRef(null);
+  const [inView, setInView] = useState(true);
+
+  useEffect(() => {
+    // Intersection Observer to pause rendering when out of view
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setInView(entry.isIntersecting);
+      },
+      { threshold: 0 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
-    <div className={`relative ${className}`}>
+    <div ref={containerRef} className={`relative ${className} pointer-events-none`}>
       <Canvas
+        frameloop={inView ? 'always' : 'never'}
+        dpr={Math.min(window.devicePixelRatio || 1, 1.5)}
         camera={{ position: [0, 0, 5.6], fov: 48 }}
         gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
         style={{
@@ -253,7 +277,7 @@ const ParticleGlobe = ({ className = 'w-full h-full' }) => {
         }}
       >
         <ambientLight intensity={0.5} />
-        <GlobeScene />
+        <GlobeScene inView={inView} />
       </Canvas>
     </div>
   );

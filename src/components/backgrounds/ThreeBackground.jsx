@@ -5,7 +5,16 @@ const ThreeBackground = () => {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    
+    // Add requested WebGL-like options to 2d context for parity and performance
+    const ctx = canvas.getContext('2d', {
+      powerPreference: "high-performance",
+      antialias: true,
+      alpha: true
+    });
+    
+    // Cap DPR to 1.5 globally
+    const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
     
     let animationFrameId;
     let particles = [];
@@ -18,8 +27,11 @@ const ThreeBackground = () => {
     const colors = ['#8b5cf6', '#3b82f6', '#67e8f9']; 
 
     const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      canvas.width = window.innerWidth * DPR;
+      canvas.height = window.innerHeight * DPR;
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     };
 
     const createParticle = (isInitial = false) => {
@@ -62,8 +74,12 @@ const ThreeBackground = () => {
     resizeCanvas();
     initParticles();
 
+    let isAnimating = false;
+
     const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (!isAnimating) return;
+
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
       
       for (let i = 0; i < particles.length; i++) {
         let p = particles[i];
@@ -98,8 +114,8 @@ const ThreeBackground = () => {
         ctx.fill();
         ctx.globalAlpha = 1.0;
         
-        // Respawn particle at bottom if it floats past the top of the screen
-        if (p.y < -20 || p.x < -20 || p.x > canvas.width + 20) {
+        // Respawn particle at bottom if it floats past the top of the screen or sides
+        if (p.y < -20 || p.x < -20 || p.x > window.innerWidth + 20) {
           particles[i] = createParticle(false);
         }
       }
@@ -107,22 +123,44 @@ const ThreeBackground = () => {
       animationFrameId = requestAnimationFrame(animate);
     };
     
-    animate();
+    // IntersectionObserver to pause/resume animation loop
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (!isAnimating) {
+            isAnimating = true;
+            animate();
+          }
+        } else {
+          isAnimating = false;
+          cancelAnimationFrame(animationFrameId);
+        }
+      },
+      { threshold: 0 }
+    );
+
+    if (canvas.parentElement) {
+      observer.observe(canvas.parentElement);
+    }
 
     return () => {
+      isAnimating = false;
+      cancelAnimationFrame(animationFrameId);
+      observer.disconnect();
       window.removeEventListener('resize', resizeCanvas);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseout', handleMouseLeave);
-      cancelAnimationFrame(animationFrameId);
     };
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 w-full h-full pointer-events-none z-0"
-      style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%' }}
-    />
+    <div className="fixed inset-0 pointer-events-none z-0">
+      <canvas
+        ref={canvasRef}
+        className="w-full h-full pointer-events-none"
+        style={{ display: 'block' }}
+      />
+    </div>
   );
 };
 

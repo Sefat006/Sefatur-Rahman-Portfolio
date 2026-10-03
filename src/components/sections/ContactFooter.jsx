@@ -1,31 +1,40 @@
-import React, { useRef, useState } from 'react';
-import gsap from 'gsap';
-import { useGSAP } from '@gsap/react';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import React, { useRef, useState, useEffect } from 'react';
 import { Mail, MapPin, Send } from 'lucide-react';
 import { FaLinkedin, FaWhatsapp, FaGithub } from 'react-icons/fa';
 import { SiCodeforces, SiLeetcode } from 'react-icons/si';
 
-gsap.registerPlugin(ScrollTrigger);
-
 const ContactFooter = () => {
-  const container = useRef();
+  const container = useRef(null);
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useGSAP(() => {
-    gsap.from('.contact-item', {
-      scrollTrigger: {
-        trigger: container.current,
-        start: "top 80%",
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.remove('opacity-0', 'translate-y-8');
+            entry.target.classList.add('opacity-100', 'translate-y-0');
+            observer.unobserve(entry.target);
+          }
+        });
       },
-      y: 30,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.2,
-      ease: "power2.out"
-    });
-  }, { scope: container });
+      { threshold: 0.1 }
+    );
+
+    if (container.current) {
+      const items = container.current.querySelectorAll('.contact-item');
+      items.forEach((item, index) => {
+        // Initial state before animation triggers
+        item.classList.add('opacity-0', 'translate-y-8', 'transition-all', 'duration-700', 'ease-out');
+        // Stagger effect
+        item.style.transitionDelay = `${index * 150}ms`;
+        observer.observe(item);
+      });
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
