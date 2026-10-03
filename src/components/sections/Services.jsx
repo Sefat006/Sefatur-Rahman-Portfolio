@@ -6,11 +6,7 @@ import {
   SearchCheck, 
   Wrench, 
   Sparkles, 
-  ArrowUpRight,
-  Database,
-  Layers,
-  Zap,
-  ShieldCheck
+  ArrowUpRight
 } from 'lucide-react';
 
 const servicesData = [

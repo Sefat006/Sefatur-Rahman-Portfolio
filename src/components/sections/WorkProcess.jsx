@@ -173,7 +173,7 @@ const workflowSteps = [
     step: "04",
     title: "Launch and Support",
     subtitle: "Deploy & Team Training",
-    description: "We deploy, train your team, and support you after launch.",
+    description: "deploy your project, train your team and support you after launch.",
     icon: LaunchSupportIcon,
     color: "#10b981", // Emerald
     pingColor: "bg-emerald-400",

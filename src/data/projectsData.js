@@ -1,12 +1,12 @@
-import newmultitech from "../assets/projects/new-multi-tech.jpg";
-import travelsbangla from "../assets/projects/travels-bangla.jpg";
-import astana from "../assets/projects/astana.jpg";
-import interspacebd from "../assets/projects/inter-space-bd.jpg";
-import dhakastudyabroad from "../assets/projects/dhaka-study-abroad.jpg";
-import codestationx from "../assets/projects/code-station-x.jpg";
-import restaurent from "../assets/projects/restaurent.png";
-import vapepark from "../assets/projects/vapepark.jpg";
-import pacificfood from "../assets/projects/pacific-food.png";
+import newmultitech from "../assets/projects/new-multi-tech.webp";
+import travelsbangla from "../assets/projects/travels-bangla.webp";
+import astana from "../assets/projects/astana.webp";
+import interspacebd from "../assets/projects/inter-space-bd.webp";
+import dhakastudyabroad from "../assets/projects/dhaka-study-abroad.webp";
+import codestationx from "../assets/projects/code-station-x.webp";
+import restaurent from "../assets/projects/restaurent.webp";
+import vapepark from "../assets/projects/vapepark.webp";
+import pacificfood from "../assets/projects/pacific-food.webp";
 
 export const isValidUrl = (url) => Boolean(url && typeof url === 'string' && url.trim() !== '' && url !== '#');
 

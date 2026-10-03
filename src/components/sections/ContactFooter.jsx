@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Mail, MapPin, Send, MessageCircle, Phone } from 'lucide-react';
+import { Mail, MapPin, Send } from 'lucide-react';
 import { FaLinkedin, FaWhatsapp, FaGithub } from 'react-icons/fa';
 import { SiCodeforces, SiLeetcode } from 'react-icons/si';
 

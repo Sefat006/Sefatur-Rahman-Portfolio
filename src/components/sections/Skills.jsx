@@ -53,7 +53,7 @@ const Skills = () => {
   useGSAP(
     () => {
       // Water float animation
-      iconsRef.current.forEach((icon, i) => {
+      iconsRef.current.forEach((icon) => {
         if (!icon) return;
 
         const randomY = Math.random() * 20 + 10;

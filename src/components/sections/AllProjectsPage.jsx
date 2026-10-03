@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Sparkles, FolderKanban, Layers, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Sparkles } from 'lucide-react';
 import { projectsData } from '../../data/projectsData';
 import ProjectCard from './projects/ProjectCard';
 import ProjectModal from './projects/ProjectModal';

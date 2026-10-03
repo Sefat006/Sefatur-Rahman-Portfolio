@@ -1,13 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, ExternalLink, Building2 } from 'lucide-react';
-import astana from '../../assets/clients/astana.jpg';
-import dhakaStudyAbroad from '../../assets/clients/dhaka-study-abroad.jpg';
-import interSpaceBd from '../../assets/clients/inter-space-bd.jpg';
-import newMultiTech from '../../assets/clients/new-multi-tech.jpg';
+import { ExternalLink, Building2 } from 'lucide-react';
+import astana from '../../assets/clients/astana.webp';
+import dhakaStudyAbroad from '../../assets/clients/dhaka-study-abroad.webp';
+import interSpaceBd from '../../assets/clients/inter-space-bd.webp';
+import newMultiTech from '../../assets/clients/new-multi-tech.webp';
 import pacificFood from '../../assets/clients/pacific-food.webp';
-import travelsBangla from '../../assets/clients/travels-bangla.png';
-import vapePark from '../../assets/clients/vapepark.png';
+import travelsBangla from '../../assets/clients/travels-bangla.webp';
+import vapePark from '../../assets/clients/vapepark.webp';
 
 const clientsData = [
   {
@@ -88,7 +88,7 @@ const Clients = () => {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="text-3xl md:text-5xl font-bold mb-4 tracking-tight"
         >
-          My <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-400 to-secondary">Clients</span>
+          Companies <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-400 to-secondary">I've Worked With</span>
         </motion.h2>
 
         {/* Subtitle */}
